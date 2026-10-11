@@ -1,0 +1,661 @@
+/* ==========================================================================
+   KeyCraft Password Generator - Stylesheet
+   Modern, responsive dark theme design
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Reset & Variables
+   -------------------------------------------------------------------------- */
+:root {
+  /* Color Palette */
+  --bg-dark: #0a0e17;
+  --card-bg: rgba(18, 25, 43, 0.85);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --input-bg: #0d1424;
+  --input-border: rgba(255, 255, 255, 0.12);
+  --input-focus: #6366f1;
+
+  /* Text Colors */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  /* Accents & Gradients */
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --glow-indigo: rgba(99, 102, 241, 0.25);
+  --glow-cyan: rgba(6, 182, 212, 0.2);
+
+  /* Strength Meter Colors */
+  --strength-empty: rgba(255, 255, 255, 0.1);
+  --strength-too-weak: #ef4444;
+  --strength-weak: #f97316;
+  --strength-medium: #eab308;
+  --strength-strong: #10b981;
+
+  /* Typography */
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Radius & Transitions */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-card: 24px;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-family-sans);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+   2. Ambient Glow Background Effects
+   -------------------------------------------------------------------------- */
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-top {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, var(--glow-indigo) 0%, transparent 70%);
+  top: -100px;
+  left: -100px;
+}
+
+.glow-bottom {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--glow-cyan) 0%, transparent 70%);
+  bottom: -150px;
+  right: -100px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Main App Card
+   -------------------------------------------------------------------------- */
+.app-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 490px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-card);
+  padding: 2.25rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6),
+              0 0 0 1px rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. Header
+   -------------------------------------------------------------------------- */
+.app-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 8px 20px var(--glow-indigo);
+}
+
+.icon-key {
+  width: 26px;
+  height: 26px;
+}
+
+.app-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-main);
+  margin-bottom: 0.35rem;
+}
+
+.app-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   5. Password Output Display
+   -------------------------------------------------------------------------- */
+.display-container {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.6rem 0.5rem 1.1rem;
+  gap: 0.5rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: var(--transition);
+}
+
+.display-container:focus-within {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px var(--glow-indigo), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.password-wrapper {
+  flex: 1;
+  overflow: hidden;
+}
+
+.password-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-main);
+  font-family: var(--font-family-mono);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-overflow: ellipsis;
+  cursor: text;
+}
+
+.password-input::placeholder {
+  color: var(--text-dim);
+  font-family: var(--font-family-sans);
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+.display-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.icon-action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition);
+}
+
+.icon-action-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.icon-action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-icon {
+  width: 20px;
+  height: 20px;
+  transition: var(--transition);
+}
+
+/* Refresh spin animation on click */
+.icon-action-btn.spin-anim .action-icon {
+  transform: rotate(360deg);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Copy Icon Toggle & Tooltip */
+.copy-btn .icon-check {
+  display: none;
+  color: var(--strength-strong);
+}
+
+.copy-btn.copied {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.copy-btn.copied .icon-copy {
+  display: none;
+}
+
+.copy-btn.copied .icon-check {
+  display: block;
+}
+
+.tooltip {
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: #1e293b;
+  color: #38bdf8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.copy-btn.copied .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   6. Password Strength Meter
+   -------------------------------------------------------------------------- */
+.strength-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.strength-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.strength-title {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.strength-status {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease;
+}
+
+.strength-meter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  height: 7px;
+}
+
+.meter-bar {
+  background: var(--strength-empty);
+  border-radius: 999px;
+  height: 100%;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Strength states */
+.strength-1 .strength-status { color: var(--strength-too-weak); }
+.strength-1 .meter-bar:nth-child(1) {
+  background-color: var(--strength-too-weak);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.strength-2 .strength-status { color: var(--strength-weak); }
+.strength-2 .meter-bar:nth-child(-n+2) {
+  background-color: var(--strength-weak);
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
+}
+
+.strength-3 .strength-status { color: var(--strength-medium); }
+.strength-3 .meter-bar:nth-child(-n+3) {
+  background-color: var(--strength-medium);
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.5);
+}
+
+.strength-4 .strength-status { color: var(--strength-strong); }
+.strength-4 .meter-bar:nth-child(-n+4) {
+  background-color: var(--strength-strong);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   7. Controls & Sliders
+   -------------------------------------------------------------------------- */
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.length-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.length-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-family-mono);
+  background: rgba(99, 102, 241, 0.1);
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* Custom Range Slider */
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #1e293b;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid var(--primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 10px var(--glow-indigo);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 14px rgba(99, 102, 241, 0.8);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid var(--primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 10px var(--glow-indigo);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.range-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 14px rgba(99, 102, 241, 0.8);
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2px;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   8. Character Options Checkboxes
+   -------------------------------------------------------------------------- */
+.options-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.checkbox-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.85rem;
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition);
+}
+
+.checkbox-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Hide native checkbox visually while preserving keyboard accessibility */
+.checkbox-card input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--text-dim);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+  position: relative;
+}
+
+/* Custom check icon */
+.custom-checkbox::after {
+  content: "";
+  width: 5px;
+  height: 9px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  margin-top: -2px;
+  transition: transform 0.15s ease-in-out;
+}
+
+/* Checked state */
+.checkbox-card input[type="checkbox"]:checked + .custom-checkbox {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.checkbox-card input[type="checkbox"]:checked + .custom-checkbox::after {
+  transform: rotate(45deg) scale(1);
+}
+
+/* Highlight checked card */
+.checkbox-card:has(input[type="checkbox"]:checked) {
+  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.06);
+}
+
+/* Focus styles for keyboard navigation */
+.checkbox-card input[type="checkbox"]:focus-visible + .custom-checkbox {
+  outline: 2px solid var(--text-main);
+  outline-offset: 2px;
+}
+
+.checkbox-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.option-hint {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-family: var(--font-family-mono);
+}
+
+/* Validation warning message */
+.warning-msg {
+  display: none;
+  font-size: 0.82rem;
+  color: var(--strength-too-weak);
+  text-align: center;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  animation: fadeIn 0.2s ease;
+}
+
+.warning-msg.show {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   9. Generate Button
+   -------------------------------------------------------------------------- */
+.generate-btn {
+  background: var(--primary-gradient);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.95rem 1.5rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  box-shadow: 0 10px 25px var(--glow-indigo);
+  transition: var(--transition);
+}
+
+.generate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(99, 102, 241, 0.45);
+}
+
+.generate-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+}
+
+.generate-btn:hover .btn-icon {
+  transform: translateX(3px);
+}
+
+/* --------------------------------------------------------------------------
+   10. Footer
+   -------------------------------------------------------------------------- */
+.app-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+
+/* --------------------------------------------------------------------------
+   11. Animations & Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+
+  .app-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .password-input {
+    font-size: 1.05rem;
+  }
+}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeyCraft — Modern, Secure Password Generator</title>
+  
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="KeyCraft — Modern, Secure Password Generator">
+  <meta name="description" content="A fast, client-side, cryptographically secure password generator built with vanilla HTML, CSS, and JavaScript.">
+  <meta name="keywords" content="password generator, secure passwords, javascript password generator, client-side security">
+  <meta name="author" content="KeyCraft">
+  <meta name="theme-color" content="#0a0e17">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="KeyCraft — Modern Password Generator">
+  <meta property="og:description" content="Generate strong, randomized passwords instantly right in your browser with zero dependencies.">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="KeyCraft — Modern Password Generator">
+  <meta property="twitter:description" content="Generate strong, randomized passwords instantly right in your browser with zero dependencies.">
+
+  <!-- Favicon (Inline SVG Data URI) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 2l-2 2m-1.5 1.5L16 7l-3 3-4-4-6 6 8 8 6-6-4-4 1.5-1.5L20 8l2-2-1-4-4 1z'/><circle cx='7.5' cy='15.5' r='1.5'/></svg>">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-top"></div>
+  <div class="ambient-glow glow-bottom"></div>
+
+  <main class="app-card">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-badge">
+        <svg class="icon-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 2l-2 2m-1.5 1.5L16 7l-3 3-4-4-6 6 8 8 6-6-4-4 1.5-1.5L20 8l2-2-1-4-4 1z" />
+          <circle cx="7.5" cy="15.5" r="1.5" />
+        </svg>
+      </div>
+      <h1 class="app-title">Password Generator</h1>
+      <p class="app-subtitle">Generate strong, secure passwords instantly</p>
+    </header>
+
+    <!-- Password Output Display -->
+    <section class="display-container" aria-label="Generated Password">
+      <div class="password-wrapper">
+        <input 
+          type="text" 
+          id="password-display" 
+          class="password-input" 
+          readonly 
+          placeholder="Click generate..." 
+          aria-label="Generated password output"
+          spellcheck="false"
+        >
+      </div>
+      
+      <div class="display-actions">
+        <!-- Re-generate Button -->
+        <button 
+          type="button" 
+          id="refresh-btn" 
+          class="icon-action-btn" 
+          title="Regenerate password" 
+          aria-label="Regenerate password"
+        >
+          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
+
+        <!-- Copy to Clipboard Button -->
+        <button 
+          type="button" 
+          id="copy-btn" 
+          class="icon-action-btn copy-btn" 
+          title="Copy to clipboard" 
+          aria-label="Copy to clipboard"
+        >
+          <!-- Copy icon -->
+          <svg class="action-icon icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <!-- Checkmark icon (shown when copied) -->
+          <svg class="action-icon icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span class="tooltip" id="copy-tooltip">Copied!</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Password Strength Meter -->
+    <section class="strength-container" aria-label="Password Strength">
+      <div class="strength-header">
+        <span class="strength-title">Strength</span>
+        <span id="strength-label" class="strength-status">Strong</span>
+      </div>
+      <div class="strength-meter" id="strength-meter" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="3">
+        <div class="meter-bar" data-step="1"></div>
+        <div class="meter-bar" data-step="2"></div>
+        <div class="meter-bar" data-step="3"></div>
+        <div class="meter-bar" data-step="4"></div>
+      </div>
+    </section>
+
+    <!-- Generator Controls -->
+    <section class="controls-section">
+      <!-- Length Slider -->
+      <div class="control-group">
+        <div class="length-header">
+          <label for="length-slider" class="control-label">Password Length</label>
+          <span id="length-display" class="length-value">16</span>
+        </div>
+        <div class="slider-wrapper">
+          <input 
+            type="range" 
+            id="length-slider" 
+            min="8" 
+            max="32" 
+            value="16" 
+            class="range-slider"
+            aria-label="Choose password length between 8 and 32"
+          >
+          <div class="slider-ticks">
+            <span>8</span>
+            <span>16</span>
+            <span>24</span>
+            <span>32</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Character Type Options -->
+      <fieldset class="options-fieldset">
+        <legend class="control-label">Character Types</legend>
+
+        <div class="options-grid">
+          <!-- Uppercase -->
+          <label class="checkbox-card" for="opt-uppercase">
+            <input type="checkbox" id="opt-uppercase" checked>
+            <span class="custom-checkbox"></span>
+            <div class="checkbox-text">
+              <span class="option-name">Uppercase Letters</span>
+              <span class="option-hint">A - Z</span>
+            </div>
+          </label>
+
+          <!-- Lowercase -->
+          <label class="checkbox-card" for="opt-lowercase">
+            <input type="checkbox" id="opt-lowercase" checked>
+            <span class="custom-checkbox"></span>
+            <div class="checkbox-text">
+              <span class="option-name">Lowercase Letters</span>
+              <span class="option-hint">a - z</span>
+            </div>
+          </label>
+
+          <!-- Numbers -->
+          <label class="checkbox-card" for="opt-numbers">
+            <input type="checkbox" id="opt-numbers" checked>
+            <span class="custom-checkbox"></span>
+            <div class="checkbox-text">
+              <span class="option-name">Numbers</span>
+              <span class="option-hint">0 - 9</span>
+            </div>
+          </label>
+
+          <!-- Symbols -->
+          <label class="checkbox-card" for="opt-symbols">
+            <input type="checkbox" id="opt-symbols" checked>
+            <span class="custom-checkbox"></span>
+            <div class="checkbox-text">
+              <span class="option-name">Special Symbols</span>
+              <span class="option-hint">!@#$%^&amp;*</span>
+            </div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Feedback / Warning Notice (if user tries to deselect all) -->
+      <p id="warning-msg" class="warning-msg" role="alert" aria-live="polite">
+        Please select at least one character type.
+      </p>
+
+      <!-- Generate Button -->
+      <button type="button" id="generate-btn" class="generate-btn">
+        <span>Generate Password</span>
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+      </button>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>KeyCraft &bull; Client-side &amp; secure</span>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
